@@ -12,21 +12,19 @@ export function generateMiddlewareFromRuleTree<TContext extends Record<string, u
   ruleTree: IRules<TContext>,
   options: IOptions<TContext>,
 ) {
-  return ({
-    next,
-    ctx,
-    type,
-    path,
-    input,
-    rawInput,
-  }: {
+  return (opts: {
     next: Function;
     ctx: TContext;
     type: string;
     path: string;
     input: { [name: string]: any };
-    rawInput: unknown;
+    rawInput?: unknown;
+    getRawInput?: () => unknown;
   }) => {
+    const { next, ctx, type, path, input } = opts;
+    // Handle both tRPC v10 (rawInput) and v11 (getRawInput) interfaces
+    const rawInput = opts.getRawInput ? opts.getRawInput() : opts.rawInput;
+
     const opWithPath: Array<string> = path.split('.');
     const opName: string = opWithPath[opWithPath.length - 1];
     const keys = Object.keys(ruleTree);
@@ -42,7 +40,7 @@ export function generateMiddlewareFromRuleTree<TContext extends Record<string, u
         rule = tree?.[type]?.[opName];
       }
     }
-    rule = rule || options.fallbackRule;
+    rule = rule || options.fallbackRule;
 
     if (rule) {
       return rule?.resolve(ctx, type, path, input, rawInput, options).then((result) => {

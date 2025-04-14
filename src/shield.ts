@@ -1,5 +1,4 @@
-import type { MiddlewareFunction, ProcedureParams } from '@trpc/server';
-import type { AnyRootConfig } from '@trpc/server/dist/core/internals/config';
+import type { AnyMiddlewareFunction } from '@trpc/server';
 import { allow } from './constructors';
 import { generateMiddlewareFromRuleTree } from './generator';
 import type { IFallbackErrorType, IOptions, IOptionsConstructor, IRules, ShieldRule } from './types';
@@ -35,25 +34,10 @@ function normalizeOptions<TContext extends Record<string, any>>(options: IOption
  * Validates rules and generates middleware from defined rule tree.
  *
  */
-/* 
-$types, 
-*/
-export function shield<
-  TContext extends Record<string, any>,
-  TConfig extends AnyRootConfig = AnyRootConfig,
-  TContextOut = TContext,
-  TInputIn = unknown,
-  TInputOut = unknown,
-  TOutputIn = unknown,
-  TOutputOut = unknown,
-  TMeta = unknown,
->(
+export function shield<TContext extends Record<string, any>>(
   ruleTree: IRules<TContext>,
   options: IOptionsConstructor<TContext> = {},
-): MiddlewareFunction<
-  ProcedureParams<TConfig, TContextOut, TInputIn, TInputOut, TOutputIn, TOutputOut, TMeta>,
-  ProcedureParams<TConfig, TContextOut, TInputIn, TInputOut, TOutputIn, TOutputOut, TMeta>
-> {
+): AnyMiddlewareFunction {
   const normalizedOptions = normalizeOptions(options);
   const ruleTreeValidity = validateRuleTree(ruleTree);
 

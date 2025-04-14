@@ -1,3 +1,9 @@
+# trpc-shield
+
+> tRPC v11 Support: This library now supports both tRPC v10 and v11. The middleware interface has been updated to handle changes in tRPC v11, including the replacement of `rawInput` with `getRawInput()` in the middleware function, while maintaining backward compatibility.
+
+[![npm version](https://badge.fury.io/js/trpc-shield.svg)](https://badge.fury.io/js/trpc-shield) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
@@ -57,6 +63,7 @@
 tRPC Shield helps you create a permission layer for your application. Using an intuitive rule-API, you'll gain the power of the shield engine on every request. This way you can make sure no internal data will be exposed.
 
 <!-- GETTING STARTED -->
+
 ## Supported tRPC Versions
 
 ### tRPC 10
@@ -66,7 +73,6 @@ tRPC Shield helps you create a permission layer for your application. Using an i
 ### tRPC 9
 
 - 0.1.2 and lower
-
 
 ## Installation
 
@@ -94,16 +100,16 @@ import { Context } from '../../src/context';
 // Rules
 
 const isAuthenticated = rule<Context>()(async (ctx, type, path, input, rawInput) => {
-  return ctx.user !== null
-})
+  return ctx.user !== null;
+});
 
 const isAdmin = rule<Context>()(async (ctx, type, path, input, rawInput) => {
-  return ctx.user.role === 'admin'
-})
+  return ctx.user.role === 'admin';
+});
 
 const isEditor = rule<Context>()(async (ctx, type, path, input, rawInput) => {
-  return ctx.user.role === 'editor'
-})
+  return ctx.user.role === 'editor';
+});
 
 // Permissions
 
@@ -123,9 +129,10 @@ export const t = trpc.initTRPC.context<Context>().create();
 export const permissionsMiddleware = t.middleware(permissions);
 
 export const shieldedProcedure = t.procedure.use(permissionsMiddleware);
-
 ```
+
 For a fully working example, [go here](https://github.com/omar-dulaimi/trpc-shield/tree/master/example).
+
 ## Documentation
 
 ### Namespaced routers
@@ -153,6 +160,7 @@ export const permissions = shield<Context>({
 ```
 
 ### API
+
 #### `shield(rules?, options?)`
 
 > Generates tRPC Middleware layer from your rules.
@@ -221,19 +229,19 @@ By default `shield` ensures no internal data is exposed to client if it was not 
 > You may also add a custom error message as the second parameter `not(rule, error)`.
 
 ```tsx
-import { shield, rule, and, or } from 'trpc-shield'
+import { shield, rule, and, or } from 'trpc-shield';
 
 const isAdmin = rule<Context>()(async (ctx, type, path, input, rawInput) => {
-  return ctx.user.role === 'admin'
-})
+  return ctx.user.role === 'admin';
+});
 
 const isEditor = rule<Context>()(async (ctx, type, path, input, rawInput) => {
-  return ctx.user.role === 'editor'
-})
+  return ctx.user.role === 'editor';
+});
 
 const isOwner = rule<Context>()(async (ctx, type, path, input, rawInput) => {
-  return ctx.user.role === 'owner'
-})
+  return ctx.user.role === 'owner';
+});
 
 const permissions = shield<Context>({
   query: {
@@ -242,7 +250,7 @@ const permissions = shield<Context>({
   mutation: {
     createBlogPost: or(isAdmin, and(isOwner, isEditor)),
   },
-})
+});
 ```
 
 ### Global Fallback Error
@@ -259,7 +267,7 @@ const permissions = shield<Context>(
   {
     fallbackError: 'To je napaka!', // meaning "This is a mistake" in Slovene.
   },
-)
+);
 
 const permissions = shield<Context>(
   {
@@ -270,7 +278,7 @@ const permissions = shield<Context>(
   {
     fallbackError: new CustomError('You are something special!'),
   },
-)
+);
 ```
 
 ### Whitelisting vs Blacklisting
@@ -285,7 +293,7 @@ const permissions = shield<Context>(
     },
   },
   { fallbackRule: deny },
-)
+);
 ```
 
 ## Contributors
